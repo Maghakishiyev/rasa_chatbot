@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir rasa-sdk requests
 # Expose the two ports (Render will use $PORT==5005 for the web service)
 EXPOSE 5005 5055
 
+ENV PORT=5005
+
 # Clear the base image ENTRYPOINT (which points at `rasa`)
 ENTRYPOINT []
 
