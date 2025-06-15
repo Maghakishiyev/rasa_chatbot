@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Rasa REST Test</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                margin: 2em;
+            }
+            #chat {
+                list-style: none;
+                padding: 0;
+            }
+            #chat li {
+                margin-bottom: 0.5em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Rasa REST Chat</h1>
+        <ul id="chat"></ul>
+        <form id="form">
+            <input
+                id="input"
+                autocomplete="off"
+                placeholder="Type a message…"
+                style="width: 80%"
+            />
+            <button>Send</button>
+        </form>
+
+        <script>
+            const chat = document.getElementById('chat');
+            const form = document.getElementById('form');
+            const input = document.getElementById('input');
+
+            // every message gets a unique sender ID
+            const sender = 'user_' + Date.now();
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text) return;
+
+                // show your message
+                const liYou = document.createElement('li');
+                liYou.textContent = 'You: ' + text;
+                chat.appendChild(liYou);
+
+                // call Rasa REST endpoint
+                try {
+                    const res = await fetch(
+                        'https://984d-37-32-71-65.ngrok-free.app/webhooks/rest/webhook',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sender, message: text }),
+                        }
+                    );
+                    const replies = await res.json();
+                    for (const r of replies) {
+                        const liBot = document.createElement('li');
+                        liBot.textContent =
+                            'Bot: ' + (r.text || JSON.stringify(r));
+                        chat.appendChild(liBot);
+                    }
+                } catch (err) {
+                    const liErr = document.createElement('li');
+                    liErr.textContent = 'Error: ' + err.toString();
+                    chat.appendChild(liErr);
+                }
+
+                input.value = '';
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.x.x/lib/index.js"></script>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Rasa Webchat</title>
+
+  <!-- 1) Widget CSS (🎯 this is what you were missing) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/rasa-webchat@1.x.x/lib/styles.css"
+  />
+
+  <!-- 2) Widget JS -->
+  <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.x.x/lib/index.js"></script>
+
+  <style>
+    body, html { margin:0; height:100%; }
+    #chat { height:100%; }
+  </style>
+</head>
+<body>
+  <!-- 3) Mount point -->
+  <div id="chat"></div>
+
+  <!-- 4) Init AFTER the CSS & JS tags -->
+  <script>
+    WebChat.default({
+      selector: "#chat",
+      initPayload: "/greet",
+      customData: { language: "en" },
+      socketUrl: "http://localhost:5005",
+      socketPath: "/socket.io/",
+      embedded: true,             // start open
+      showFullScreenButton: false,
+      showCloseButton: false
+    });
+  </script>
+</body>
+</html>
