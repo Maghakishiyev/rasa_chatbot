@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 # start.sh
 
-# 1. start the Rasa HTTP server on the Render‐provided $PORT
-rasa run \
-  --enable-api \
-  --cors '*' \
-  --host 0.0.0.0 \
-  --port "$PORT" &
+# 1) Start the Rasa action server in the background
+rasa run actions --actions actions &
+ACTION_PID=$!
 
-# 2. start the action server on port 5055
-rasa run actions \
-  --actions actions \
-  --port 5055
+# 2) Start the Rasa core server (with REST API)
+rasa run --enable-api --cors "*" --host 0.0.0.0 --port $PORT

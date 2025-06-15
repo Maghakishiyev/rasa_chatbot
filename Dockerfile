@@ -18,6 +18,5 @@ EXPOSE 5005
 USER 1001
 
 # expose the default port (just informative)
-EXPOSE 7860
-CMD rasa run --enable-api --cors "*" --host 0.0.0.0 --port 7860 & \
-    rasa run actions --actions actions --port 5055
+COPY start.sh /app/start.sh
+CMD ["./start.sh"]
