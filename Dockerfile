@@ -17,5 +17,5 @@ EXPOSE 5005 5055
 # Switch to non-root user (security best practice)
 USER 1001
 
-# Default entry—when container starts, it'll run both server + action server
-CMD ["run", "--enable-api", "--cors", "*"]
+# expose the default port (just informative)
+CMD ["sh", "-c", "rasa run --enable-api --cors \"*\" --host 0.0.0.0 --port ${PORT:-5005}"]
