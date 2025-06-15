@@ -18,4 +18,4 @@ EXPOSE 5005 5055
 USER 1001
 
 # expose the default port (just informative)
-CMD ["sh", "-c", "rasa run --enable-api --cors \"*\" --host 0.0.0.0 --port ${PORT:-5005}"]
+CMD rasa run --enable-api --cors "*" --host 0.0.0.0 --port $PORT
