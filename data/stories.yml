@@ -43,3 +43,28 @@ stories:
   steps:
   - intent: ask_attribute
   - action: action_handle_attribute_query
+
+- story: escalate to human agent
+  steps:
+    - intent: connect_to_agent
+    - action: action_connect_to_agent
+
+- story: recommend some products
+  steps:
+    - intent: recommend_products
+    - action: action_recommend_products
+
+- story: compare two products
+  steps:
+    - intent: compare_products
+    - action: action_compare_products
+
+- story: list categories
+  steps:
+    - intent: list_categories
+    - action: action_list_categories
+
+- story: show products by category
+  steps:
+    - intent: show_products_by_category
+    - action: action_show_products_by_category

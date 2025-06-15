@@ -1,0 +1,44 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-category",
+      "2": "I-category",
+      "3": "L-category",
+      "4": "U-category",
+      "5": "B-memory",
+      "6": "I-memory",
+      "7": "L-memory",
+      "8": "U-memory",
+      "9": "B-price",
+      "10": "I-price",
+      "11": "L-price",
+      "12": "U-price",
+      "13": "B-product",
+      "14": "I-product",
+      "15": "L-product",
+      "16": "U-product",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-category": 1,
+      "I-category": 2,
+      "L-category": 3,
+      "U-category": 4,
+      "B-memory": 5,
+      "I-memory": 6,
+      "L-memory": 7,
+      "U-memory": 8,
+      "B-price": 9,
+      "I-price": 10,
+      "L-price": 11,
+      "U-price": 12,
+      "B-product": 13,
+      "I-product": 14,
+      "L-product": 15,
+      "U-product": 16,
+      "O": 0
+    },
+    "num_tags": 17
+  }
+]

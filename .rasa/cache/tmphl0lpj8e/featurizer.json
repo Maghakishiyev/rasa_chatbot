@@ -1,0 +1,70 @@
+{
+  "type": "MaxHistoryTrackerFeaturizer",
+  "state_featurizer": {
+    "action_texts": [],
+    "entity_tag_specs": [],
+    "feature_states": {
+      "intent": {
+        "affirm": 0,
+        "ask_attribute": 1,
+        "ask_product_price": 2,
+        "back": 3,
+        "bot_challenge": 4,
+        "check_availability": 5,
+        "compare_products": 6,
+        "connect_to_agent": 7,
+        "deny": 8,
+        "goodbye": 9,
+        "greet": 10,
+        "list_categories": 11,
+        "mood_great": 12,
+        "mood_unhappy": 13,
+        "nlu_fallback": 14,
+        "out_of_scope": 15,
+        "recommend_products": 16,
+        "restart": 17,
+        "session_start": 18,
+        "show_products_by_category": 19
+      },
+      "action_name": {
+        "action_listen": 0,
+        "action_restart": 1,
+        "action_session_start": 2,
+        "action_default_fallback": 3,
+        "action_deactivate_loop": 4,
+        "action_revert_fallback_events": 5,
+        "action_default_ask_affirmation": 6,
+        "action_default_ask_rephrase": 7,
+        "action_two_stage_fallback": 8,
+        "action_unlikely_intent": 9,
+        "action_back": 10,
+        "...": 11,
+        "action_extract_slots": 12,
+        "action_handle_attribute_query": 13,
+        "action_product_price": 14,
+        "action_check_availability": 15,
+        "action_connect_to_agent": 16,
+        "action_recommend_products": 17,
+        "action_compare_products": 18,
+        "action_list_categories": 19,
+        "action_show_products_by_category": 20,
+        "utter_cheer_up": 21,
+        "utter_did_that_help": 22,
+        "utter_goodbye": 23,
+        "utter_greet": 24,
+        "utter_happy": 25,
+        "utter_iamabot": 26
+      },
+      "entities": {
+        "category": 0,
+        "memory": 1,
+        "price": 2,
+        "product": 3
+      },
+      "slots": {},
+      "active_loop": {}
+    }
+  },
+  "remove_duplicates": true,
+  "max_history": 5
+}

@@ -1,0 +1,15 @@
+{
+  "0": "affirm",
+  "1": "ask_attribute",
+  "2": "bot_challenge",
+  "3": "compare_products",
+  "4": "connect_to_agent",
+  "5": "deny",
+  "6": "goodbye",
+  "7": "greet",
+  "8": "list_categories",
+  "9": "mood_great",
+  "10": "mood_unhappy",
+  "11": "recommend_products",
+  "12": "show_products_by_category"
+}

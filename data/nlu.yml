@@ -99,6 +99,44 @@ nlu:
     - Do you have any [UltraTab Pro](product)?
     - Tell me about the [SuperPhone X](product)
 
+- intent: connect_to_agent
+  examples: |
+    - I want to talk to a human
+    - connect me to support
+    - I need help from a person
+    - escalate this to a human agent
+    - can I speak with customer service?
+
+- intent: recommend_products
+  examples: |
+    - what do you recommend?
+    - suggest some products
+    - recommend me items
+    - show me popular products
+    - any recommendations?
+
+- intent: compare_products
+  examples: |
+    - compare [iPhone 12](product) and [Galaxy S21](product)
+    - what is the difference between [MacBook Pro](product) and [Dell XPS](product)?
+    - compare [Product A](product) with [Product B](product)
+    - show me a comparison of [UltraTab](product) and [MegaTab](product)
+
+- intent: list_categories
+  examples: |
+    - what categories do you have?
+    - list your departments
+    - show me the product categories
+    - what kinds of product types are there?
+
+- intent: show_products_by_category
+  examples: |
+    - show me all [Electronics](category)
+    - list [Apparel](category) items
+    - I want to see [Home & Kitchen](category)
+    - show products in [Books](category)
+
+
 entities:
   - product
   - memory

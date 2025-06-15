@@ -179,3 +179,170 @@ class ActionHandleAttributeQuery(Action):
         reply = "Here are some products I found:\n" + "\n".join(lines)
         dispatcher.utter_message(text=reply)
         return []
+    
+    
+# at top of file
+SUPPORT_EMAIL = "support@yourstore.com"
+SUPPORT_PHONE = "+1-800-123-4567"
+
+class ActionConnectToAgent(Action):
+    def name(self) -> Text:
+        return "action_connect_to_agent"
+
+    def run(self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        text = (
+            f"If you need help from a human, you can reach us at:\n"
+            f"• Email: {SUPPORT_EMAIL}\n"
+            f"• Phone: {SUPPORT_PHONE}"
+        )
+        dispatcher.utter_message(text=text)
+        return []
+
+
+class ActionRecommendProducts(Action):
+    def name(self) -> Text:
+        return "action_recommend_products"
+
+    def run(self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        try:
+            resp = requests.get(f"{BACKEND_URL}/api/products")
+            resp.raise_for_status()
+            products = resp.json().get("products", [])
+        except Exception:
+            dispatcher.utter_message(text="Sorry, I can’t fetch recommendations right now.")
+            return []
+
+        if not products:
+            dispatcher.utter_message(text="There are no products to recommend at the moment.")
+            return []
+
+        # take first 5 as “top” recommendations
+        recs = products[:5]
+        lines = [f"• {p['name']}: ${p['price']}" for p in recs]
+        dispatcher.utter_message(
+            text="Here are some products you might like:\n" + "\n".join(lines)
+        )
+        return []
+
+
+class ActionCompareProducts(Action):
+    def name(self) -> Text:
+        return "action_compare_products"
+
+    def run(self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        names = list(tracker.get_latest_entity_values("product"))
+        if len(names) < 2:
+            dispatcher.utter_message(text="Please tell me two products to compare.")
+            return []
+
+        try:
+            resp = requests.get(f"{BACKEND_URL}/api/products")
+            resp.raise_for_status()
+            products = resp.json().get("products", [])
+        except Exception:
+            dispatcher.utter_message(text="I can’t fetch product info right now.")
+            return []
+
+        def find(name):
+            for p in products:
+                if name.lower() in p.get("name","").lower():
+                    return p
+            return None
+
+        p1 = find(names[0])
+        p2 = find(names[1])
+        if not p1 or not p2:
+            dispatcher.utter_message(text="I couldn’t find one of those products.")
+            return []
+
+        def desc(p):
+            mem = ", ".join(p.get("available_memory", []))
+            cat = p.get("category", "N/A")
+            return (
+                f"{p['name']}\n"
+                f"  • Price: ${p['price']}\n"
+                f"  • Memory: {mem or '–'}\n"
+                f"  • Category: {cat}"
+            )
+
+        reply = "Here’s the comparison:\n\n" + desc(p1) + "\n\n" + desc(p2)
+        dispatcher.utter_message(text=reply)
+        return []
+
+
+class ActionListCategories(Action):
+    def name(self) -> Text:
+        return "action_list_categories"
+
+    def run(self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        try:
+            resp = requests.get(f"{BACKEND_URL}/api/products")
+            resp.raise_for_status()
+            products = resp.json().get("products", [])
+        except Exception:
+            dispatcher.utter_message(text="Sorry, I can’t fetch categories right now.")
+            return []
+
+        cats = sorted({p.get("category","Uncategorized") for p in products})
+        if not cats:
+            dispatcher.utter_message(text="I couldn’t find any categories.")
+            return []
+
+        lines = [f"• {c}" for c in cats]
+        dispatcher.utter_message(
+            text="We have the following categories:\n" + "\n".join(lines)
+        )
+        return []
+
+
+class ActionShowProductsByCategory(Action):
+    def name(self) -> Text:
+        return "action_show_products_by_category"
+
+    def run(self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        category_q = next(tracker.get_latest_entity_values("category"), None)
+        if not category_q:
+            dispatcher.utter_message(text="Which category are you interested in?")
+            return []
+
+        try:
+            resp = requests.get(f"{BACKEND_URL}/api/products")
+            resp.raise_for_status()
+            products = resp.json().get("products", [])
+        except Exception:
+            dispatcher.utter_message(text="I can’t fetch products right now.")
+            return []
+
+        matched = [
+            p for p in products
+            if category_q.lower() == p.get("category","").lower()
+        ]
+        if not matched:
+            dispatcher.utter_message(text=f"No products found in “{category_q}.”")
+            return []
+
+        lines = [f"• {p['name']}: ${p['price']}" for p in matched[:5]]
+        dispatcher.utter_message(
+            text=f"Here are some items in {category_q}:\n" + "\n".join(lines)
+        )
+        return []
