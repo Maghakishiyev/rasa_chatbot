@@ -1,81 +1,207 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Rasa REST Test</title>
-        <style>
-            body {
-                font-family: sans-serif;
-                margin: 2em;
-            }
-            #chat {
-                list-style: none;
-                padding: 0;
-            }
-            #chat li {
-                margin-bottom: 0.5em;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Rasa REST Chat</h1>
-        <ul id="chat"></ul>
-        <form id="form">
-            <input
-                id="input"
-                autocomplete="off"
-                placeholder="Type a message…"
-                style="width: 80%"
-            />
-            <button>Send</button>
-        </form>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Toggleable Chat Widget</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html, body { height:100%; font-family: Arial, sans-serif; }
 
-        <script>
-            const chat = document.getElementById('chat');
-            const form = document.getElementById('form');
-            const input = document.getElementById('input');
+    /* Wrapper to hold both button & chat panel */
+    .chat-wrapper {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
 
-            // every message gets a unique sender ID
-            const sender = 'user_' + Date.now();
+    /* The floating button */
+    .chat-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .chat-toggle:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
 
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const text = input.value.trim();
-                if (!text) return;
+    /* Hidden by default */
+    .chat-container {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 360px;
+      height: 500px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+    /* When wrapper has .open, show it */
+    .chat-wrapper.open .chat-container {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
 
-                // show your message
-                const liYou = document.createElement('li');
-                liYou.textContent = 'You: ' + text;
-                chat.appendChild(liYou);
+    /* Chat UI inside */
+    .chat-header {
+      background: #007bff;
+      color: #fff;
+      padding: 0.8em;
+      text-align: center;
+      font-weight: bold;
+    }
+    .messages {
+      flex: 1;
+      padding: 1em;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      background: #fff;
+    }
+    .message {
+      max-width: 75%;
+      padding: 0.6em 1em;
+      border-radius: 20px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    .you {
+      align-self: flex-end;
+      background: #007bff;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .bot {
+      align-self: flex-start;
+      background: #e5e5ea;
+      color: #000;
+      border-bottom-left-radius: 4px;
+    }
+    .input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 0.5em;
+      background: #fafafa;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 0.6em 1em;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+      font-size: 1em;
+    }
+    .input-area button {
+      margin-left: 0.5em;
+      padding: 0.6em 1.2em;
+      background: #007bff;
+      border: none;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .input-area button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
 
-                // call Rasa REST endpoint
-                try {
-                    const res = await fetch(
-                        'https://984d-37-32-71-65.ngrok-free.app/webhooks/rest/webhook',
-                        {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ sender, message: text }),
-                        }
-                    );
-                    const replies = await res.json();
-                    for (const r of replies) {
-                        const liBot = document.createElement('li');
-                        liBot.textContent =
-                            'Bot: ' + (r.text || JSON.stringify(r));
-                        chat.appendChild(liBot);
-                    }
-                } catch (err) {
-                    const liErr = document.createElement('li');
-                    liErr.textContent = 'Error: ' + err.toString();
-                    chat.appendChild(liErr);
-                }
+  <div class="chat-wrapper">
+    <!-- 1) Toggle button -->
+    <button class="chat-toggle">💬</button>
 
-                input.value = '';
-                window.scrollTo(0, document.body.scrollHeight);
-            });
-        </script>
+    <!-- 2) Chat panel -->
+    <div class="chat-container">
+      <div class="chat-header">Chat with us</div>
+      <div class="messages" id="messages"></div>
+      <form class="input-area" id="chat-form">
+        <input id="chat-input" type="text" autocomplete="off" placeholder="Type a message…" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.x.x/lib/index.js"></script>
-    </body>
+  <script>
+    const wrapper = document.querySelector('.chat-wrapper');
+    const toggle  = document.querySelector('.chat-toggle');
+    const form    = document.getElementById('chat-form');
+    const input   = document.getElementById('chat-input');
+    const msgs    = document.getElementById('messages');
+    const sender  = 'user_' + Date.now();
+
+    // open/close chat panel
+    toggle.addEventListener('click', () => {
+      wrapper.classList.toggle('open');
+      // focus input when opening
+      if (wrapper.classList.contains('open')) {
+        setTimeout(()=> input.focus(), 300);
+      }
+    });
+
+    // scroll helper
+    function scrollToBottom() {
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    // bubble helper
+    function addMessage(text, cls) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      div.classList.add('message', cls);
+      msgs.appendChild(div);
+      scrollToBottom();
+    }
+
+    // form submit
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'you');
+      input.value = '';
+
+      try {
+        const res = await fetch('https://984d-37-32-71-65.ngrok-free.app/webhooks/rest/webhook', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ sender, message: text })
+        });
+        const replies = await res.json();
+        for (const r of replies) {
+          addMessage(r.text || JSON.stringify(r), 'bot');
+        }
+      } catch (err) {
+        addMessage('Error: '+err.message, 'bot');
+      }
+    });
+
+    // optional greeting when opened
+    wrapper.addEventListener('transitionend', () => {
+      if (wrapper.classList.contains('open') && msgs.childElementCount === 0) {
+        addMessage('👋 Hello! How can I help you today?', 'bot');
+      }
+    });
+  </script>
+</body>
 </html>
