@@ -1,0 +1,11 @@
+{
+  "0": "affirm",
+  "1": "ask_product_price",
+  "2": "bot_challenge",
+  "3": "check_availability",
+  "4": "deny",
+  "5": "goodbye",
+  "6": "greet",
+  "7": "mood_great",
+  "8": "mood_unhappy"
+}

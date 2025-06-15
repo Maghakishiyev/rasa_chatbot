@@ -1,0 +1,36 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-memory",
+      "2": "I-memory",
+      "3": "L-memory",
+      "4": "U-memory",
+      "5": "B-price",
+      "6": "I-price",
+      "7": "L-price",
+      "8": "U-price",
+      "9": "B-product",
+      "10": "I-product",
+      "11": "L-product",
+      "12": "U-product",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-memory": 1,
+      "I-memory": 2,
+      "L-memory": 3,
+      "U-memory": 4,
+      "B-price": 5,
+      "I-price": 6,
+      "L-price": 7,
+      "U-price": 8,
+      "B-product": 9,
+      "I-product": 10,
+      "L-product": 11,
+      "U-product": 12,
+      "O": 0
+    },
+    "num_tags": 13
+  }
+]
