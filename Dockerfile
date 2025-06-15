@@ -1,24 +1,23 @@
 FROM rasa/rasa:3.6.21-full
-
 USER root
+
+# Copy project files
+COPY . /app
 WORKDIR /app
 
-# Copy code + the start script
-COPY . /app
+# Create requirements.txt with necessary dependencies
+RUN echo "rasa==3.6.21" > requirements.txt
 
-# Install your custom action dependencies
-RUN pip install --no-cache-dir rasa-sdk requests
+# Install any custom action dependencies
+RUN pip install -r requirements.txt
 
-# Expose the two ports (Render will use $PORT==5005 for the web service)
-EXPOSE 5005 5055
+# Expose Rasa ports (5005 for the REST channel, 5055 for actions)
+EXPOSE 5005
 
-ENV PORT=5005
-
-# Clear the base image ENTRYPOINT (which points at `rasa`)
-ENTRYPOINT []
-
-# Switch back to non-root
+# Switch to non-root user (security best practice)
 USER 1001
 
-# Launch both servers via our script
-CMD ["bash", "/app/start.sh"]
+# expose the default port (just informative)
+EXPOSE 7860
+CMD rasa run --enable-api --cors "*" --host 0.0.0.0 --port 7860 & \
+    rasa run actions --actions actions --port 5055
